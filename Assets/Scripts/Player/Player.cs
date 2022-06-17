@@ -22,14 +22,22 @@ public class Player : MonoBehaviour
 
     private Vector3 desiredPosition;
 
+    private Quaternion initialRotation;
+
     private void OnEnable()
     {
         GameManager.OnGameReset += ResetPlayer;
+        GameManager.OnGameEnded += OnGameEnded;
+        GameManager.OnGameStarted += OnGameStart;
+
+        initialRotation = transform.rotation;
     }
 
     private void OnDisable()
     {
         GameManager.OnGameReset -= ResetPlayer;
+        GameManager.OnGameEnded -= OnGameEnded;
+        GameManager.OnGameStarted -= OnGameStart;
     }
 
     private void Awake()
@@ -63,9 +71,9 @@ public class Player : MonoBehaviour
         cameraYRotation = Mathf.Clamp(cameraYRotation, minCameraYRotation, maxCameraYRotation);
 
         Quaternion desiredRotation = Quaternion.Euler(
-            playerCamera.transform.rotation.x,
+            playerCamera.transform.localRotation.x,
             cameraYRotation,
-            playerCamera.transform.rotation.z
+            playerCamera.transform.localRotation.z
         );
 
         HandleCameraRotation(desiredRotation);
@@ -81,12 +89,22 @@ public class Player : MonoBehaviour
 
     private void HandleCameraRotation(Quaternion desiredRotation)
     {
-        playerCamera.transform.rotation = Quaternion.Slerp(playerCamera.transform.rotation, desiredRotation, Time.deltaTime * cameraRotateSpeed);
+        playerCamera.transform.localRotation = Quaternion.Slerp(playerCamera.transform.localRotation, desiredRotation, Time.deltaTime * cameraRotateSpeed);
     }
 
     public void ResetPlayer()
     {
         desiredPosition = objectIdlePosition.position;
         cameraYRotation = 0.0f;
+    }
+
+    private void OnGameStart()
+    {
+        transform.rotation = initialRotation;
+    }
+
+    private void OnGameEnded()
+    {
+        transform.rotation = Quaternion.LookRotation(GuardMovement.instance.transform.position - transform.position);
     }
 }
