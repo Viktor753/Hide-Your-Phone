@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public float offsetToDecideIfObjectIsUp = 0.2f;
 
     private Vector3 desiredPosition;
+    private Quaternion desiredObjectRotation;
 
     private Quaternion initialRotation;
 
@@ -60,7 +61,8 @@ public class Player : MonoBehaviour
 
         //Handle object up and down
         desiredPosition = upInput && GameManager.gameStarted ? objectInUsePosition.position : objectIdlePosition.position;
-        HandleObjectPosition(desiredPosition);
+        desiredObjectRotation = upInput && GameManager.gameStarted ? objectInUsePosition.rotation : objectIdlePosition.rotation;
+        HandleObjectPosition(desiredPosition, desiredObjectRotation);
 
 
         
@@ -82,9 +84,10 @@ public class Player : MonoBehaviour
         playerObjectUp = Vector3.Distance(playerObject.transform.position, objectInUsePosition.position) < offsetToDecideIfObjectIsUp;
     }
 
-    private void HandleObjectPosition(Vector3 desiredPosition)
+    private void HandleObjectPosition(Vector3 desiredPosition, Quaternion desiredRotation)
     {
         playerObject.transform.position = Vector3.Slerp(playerObject.transform.position, desiredPosition, Time.deltaTime * playerObjectSpeed);
+        playerObject.transform.rotation = Quaternion.Lerp(playerObject.transform.rotation, desiredRotation, Time.deltaTime * playerObjectSpeed);
     }
 
     private void HandleCameraRotation(Quaternion desiredRotation)

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LevelEnvironment : MonoBehaviour
 {
-    public int interestsToHave;
     public PointOfInterest[] pointsOfIntrest;
 
     private PointOfInterest currentInterest;
@@ -71,6 +70,10 @@ public class LevelEnvironment : MonoBehaviour
         }
 
         Debug.Log("New interest: " + currentInterest.name);
-        currentInterest.MoveToPoint();
+
+        if (GameManager.gameStarted)
+        {
+            currentInterest.MoveToPoint();
+        }
     }
 }

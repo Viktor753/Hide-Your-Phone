@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
             }
 
 
-            if(guard.inAngle && guard.inRange && Player.instance.playerObjectUp)
+            if(guard.playerCanGetCaught && Player.instance.playerObjectUp)
             {
                 EndGame();
             }
